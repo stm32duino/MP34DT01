@@ -1,0 +1,28 @@
+#######################################
+# Syntax Coloring Map For MD34dt01
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+mp34dt01			KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin				KEYWORD2
+end				KEYWORD2
+record				KEYWORD2
+stop_recording			KEYWORD2
+pause_recording			KEYWORD2
+resume_recording		KEYWORD2
+set_volume			KEYWORD2
+
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
