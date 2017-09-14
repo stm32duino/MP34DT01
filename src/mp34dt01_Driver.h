@@ -1,15 +1,14 @@
 /**
- ******************************************************************************
- * @file    x_nucleo_cca02m1_audio_l4.h
- * @author  Central Labs
- * @version V2.0.0
- * @date    06-March-2017
- * @brief   This file contains the common defines and functions prototypes for
- *          x_nucleo_cca02m1_audio_l4.c driver.
- ******************************************************************************
+******************************************************************************
+* @file    mp34dt01_Driver.h
+* @author  Central Labs updated by WI6LABS
+* @version V2.0.0
+* @date    10-July-2017
+* @brief   This file provides the Audio driver for the STM32 IOT discovery kit
+*******************************************************************************
  * @attention
  *
- * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
+ * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -37,12 +36,14 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X_NUCLEO_CCA02M1_AUDIO_L4_H
-#define __X_NUCLEO_CCA02M1_AUDIO_L4_H
+#ifndef __MP34DT01_DRIVER_H
+#define __MP34DT01_DRIVER_H
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
+
+#include "PeripheralPins.h"
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -50,15 +51,15 @@ extern "C" {
  * @{
  */
 
-/** @addtogroup X-NUCLEO-CCA02M1
+/** @addtogroup MP34DT01_L4_DRIVER
  * @{
  */
 
-/** @addtogroup X-NUCLEO-CCA02M1_AUDIO_L4
+/** @addtogroup MP34DT01_L4_DRIVER_AUDIO_L4
  * @{
  */
 
-/** @defgroup X-NUCLEO-CCA02M1_AUDIO_L4_Private_Types
+/** @defgroup MP34DT01_L4_DRIVER_AUDIO_L4_Private_Types
  * @{
  */
 
@@ -66,9 +67,9 @@ extern "C" {
  * @brief   HP filter state structure definition
  */
 typedef struct {
-	int32_t Z; 
-	int32_t oldOut; 
-	int32_t oldIn; 
+	int32_t Z;
+	int32_t oldOut;
+	int32_t oldIn;
 }HP_FilterState_TypeDef;
 
 
@@ -84,14 +85,14 @@ typedef struct {
 
 	uint16_t * PCM_Data; /*!< Takes track of the external PCM data buffer as passed by the user in the start function*/
 
-} X_NUCLEO_CCA02M1_HandlerTypeDef;
+} MP34DT01_HandlerTypeDef;
 
 /**
  * @}
  */
 
 
-/** @defgroup X-NUCLEO-CCA02M1_AUDIO_L4_Exported_Constants
+/** @defgroup MP34DT01_L4_DRIVER_AUDIO_L4_Exported_Constants
  * @{
  */
 
@@ -102,18 +103,18 @@ typedef struct {
  CONFIGURATION: Audio Driver Configuration parameters
  ------------------------------------------------------------------------------*/
 
-  /* Audio status definition */     
+  /* Audio status definition */
 #ifndef AUDIO_OK
 #define AUDIO_OK                            ((uint8_t)0)
-#endif  
+#endif
 
 #ifndef AUDIO_ERROR
 #define AUDIO_ERROR                         ((uint8_t)1)
-#endif 
+#endif
 
 #ifndef AUDIO_TIMEOUT
 #define AUDIO_TIMEOUT                       ((uint8_t)2)
-#endif 
+#endif
 
 #define DEFAULT_AUDIO_IN_VOLUME               64
 
@@ -121,7 +122,7 @@ typedef struct {
  * @}
  */
 
-/** @defgroup X-NUCLEO-CCA02M1_AUDIO_L4_Exported_Variables
+/** @defgroup MP34DT01_L4_DRIVER_AUDIO_L4_Exported_Variables
  * @{
  */
 extern DMA_HandleTypeDef               hdma_dfsdmReg_FLT[];
@@ -130,98 +131,58 @@ extern DMA_HandleTypeDef               hdma_dfsdmReg_FLT[];
  * @}
  */
 
-/** @defgroup X-NUCLEO-CCA02M1_AUDIO_L4_Exported_Macros
+/** @defgroup MP34DT01_L4_DRIVER_AUDIO_L4_Exported_Macros
  * @{
  */
 
  #define SaturaLH(N, L, H) (((N)<(L))?(L):(((N)>(H))?(H):(N)))
-  
+
 #define OverSampling(__FREQUENCY__) \
 ((__FREQUENCY__ == AUDIO_FREQUENCY_8K)  ? 128 \
-  : (__FREQUENCY__ == AUDIO_FREQUENCY_11K) ? 256 \
     : (__FREQUENCY__ == AUDIO_FREQUENCY_16K) ? 64 \
-      : (__FREQUENCY__ == AUDIO_FREQUENCY_22K) ? 128 \
         : (__FREQUENCY__ == AUDIO_FREQUENCY_32K) ? 64 \
-          : (__FREQUENCY__ == AUDIO_FREQUENCY_44K) ? 64  \
             : (__FREQUENCY__ == AUDIO_FREQUENCY_48K) ? 64  \
-              : (__FREQUENCY__ == AUDIO_FREQUENCY_96K) ? 32 : 32)  
-              
+              : (__FREQUENCY__ == AUDIO_FREQUENCY_96K) ? 32 : 32)
+
 #define ClockDivider(__FREQUENCY__) \
               ((__FREQUENCY__ == AUDIO_FREQUENCY_8K)  ? 17 \
-                : (__FREQUENCY__ == AUDIO_FREQUENCY_11K) ? 4 \
                   : (__FREQUENCY__ == AUDIO_FREQUENCY_16K) ? 17 \
-                    : (__FREQUENCY__ == AUDIO_FREQUENCY_22K) ? 4 \
                       : (__FREQUENCY__ == AUDIO_FREQUENCY_32K) ? 24 \
-                        : (__FREQUENCY__ == AUDIO_FREQUENCY_44K) ? 4  \
                           : (__FREQUENCY__ == AUDIO_FREQUENCY_48K) ? 16  \
                             : (__FREQUENCY__ == AUDIO_FREQUENCY_96K) ? 16 : 16)
 /**
  * @}
  */
 
-  /** @defgroup X-NUCLEO-CCA02M1_AUDIO_L4_Exported_Constants 
+  /** @defgroup MP34DT01_L4_DRIVER_AUDIO_L4_Exported_Constants
   * @{
-  */ 
+  */
 #define MAX_CH_NUMBER           (4)
 #define MAX_FS                  (96000)
 #define MAX_SAMPLES_PER_CH      ((MAX_FS/1000)*2)
 
 /* AUDIO FREQUENCY */
-#ifndef AUDIO_FREQUENCY_192K
-#define AUDIO_FREQUENCY_192K          ((uint32_t)192000)
-#endif
 #ifndef AUDIO_FREQUENCY_96K
 #define AUDIO_FREQUENCY_96K           ((uint32_t)96000)
 #endif
 #ifndef AUDIO_FREQUENCY_48K
 #define AUDIO_FREQUENCY_48K           ((uint32_t)48000)
 #endif
-#ifndef AUDIO_FREQUENCY_44K
-#define AUDIO_FREQUENCY_44K           ((uint32_t)44100)
-#endif
 #ifndef AUDIO_FREQUENCY_32K
 #define AUDIO_FREQUENCY_32K           ((uint32_t)32000)
-#endif
-#ifndef AUDIO_FREQUENCY_22K
-#define AUDIO_FREQUENCY_22K           ((uint32_t)22050)
 #endif
 #ifndef AUDIO_FREQUENCY_16K
 #define AUDIO_FREQUENCY_16K           ((uint32_t)16000)
 #endif
-#ifndef AUDIO_FREQUENCY_11K
-#define AUDIO_FREQUENCY_11K           ((uint32_t)11025)
-#endif
 #ifndef AUDIO_FREQUENCY_8K
-#define AUDIO_FREQUENCY_8K            ((uint32_t)8000) 
+#define AUDIO_FREQUENCY_8K            ((uint32_t)8000)
 #endif
 
 /* DFSDM Configuration defines */
-
-#define AUDIO_IN_DFSDM_CLK_ENABLE()                             __HAL_RCC_DFSDM_CLK_ENABLE()
-
-#define AUDIO_IN_DFSDM_1st_CHANNEL                              DFSDM_Channel2
-#define AUDIO_IN_DFSDM_2nd_CHANNEL                              DFSDM_Channel1
-#define AUDIO_IN_DFSDM_3rd_CHANNEL                              DFSDM_Channel7
-#define AUDIO_IN_DFSDM_4rd_CHANNEL                              DFSDM_Channel6
-
 #define AUDIO_IN_DFSDM_1st_FILTER                               DFSDM_Filter0
 #define AUDIO_IN_DFSDM_2st_FILTER                               DFSDM_Filter1
 #define AUDIO_IN_DFSDM_3rd_FILTER                               DFSDM_Filter2
 #define AUDIO_IN_DFSDM_4th_FILTER                               DFSDM_Filter3
-
-#define AUDIO_IN_DFSDM_CKOUT_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOC_CLK_ENABLE()
-#define AUDIO_IN_DFSDM_CKOUT_GPIO_PORT                          GPIOC
-#define AUDIO_IN_DFSDM_CKOUT_PIN                                GPIO_PIN_2
-
-#define AUDIO_IN_DFSDM_CH12_DATAIN_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOB_CLK_ENABLE()
-#define AUDIO_IN_DFSDM_CH12_DATIN_GPIO_PORT                     GPIOB
-#define AUDIO_IN_DFSDM_CH12_DATIN_PIN                           GPIO_PIN_14
-
-#define AUDIO_IN_DFSDM_CH34_DATAIN_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOB_CLK_ENABLE()
-#define AUDIO_IN_DFSDM_CH34_DATIN_GPIO_PORT                     GPIOB
-#define AUDIO_IN_DFSDM_CH34_DATIN_PIN                           GPIO_PIN_10
-
-#define AUDIO_IN_DFSDM_CKOUT_DATIN_AF                           GPIO_AF6_DFSDM
 
 /* I2S DMA Stream Rx definitions */
 #define AUDIO_IN_DFSDM_DMA_CLK_ENABLE()                         __HAL_RCC_DMA1_CLK_ENABLE()
@@ -229,12 +190,12 @@ extern DMA_HandleTypeDef               hdma_dfsdmReg_FLT[];
 #define AUDIO_IN_DFSDM_DMA_1st_CHANNEL                          DMA1_Channel4
 #define AUDIO_IN_DFSDM_DMA_2nd_CHANNEL                          DMA1_Channel5
 #define AUDIO_IN_DFSDM_DMA_3rd_CHANNEL                          DMA1_Channel6
-#define AUDIO_IN_DFSDM_DMA_4th_CHANNEL                          DMA1_Channel7  
+#define AUDIO_IN_DFSDM_DMA_4th_CHANNEL                          DMA1_Channel7
 
 #define AUDIO_IN_DFSDM_DMA_1st_CH_IRQn                          DMA1_Channel4_IRQn
 #define AUDIO_IN_DFSDM_DMA_2nd_CH_IRQn                          DMA1_Channel5_IRQn
 #define AUDIO_IN_DFSDM_DMA_3rd_CH_IRQn                          DMA1_Channel6_IRQn
-#define AUDIO_IN_DFSDM_DMA_4th_CH_IRQn                          DMA1_Channel7_IRQn  
+#define AUDIO_IN_DFSDM_DMA_4th_CH_IRQn                          DMA1_Channel7_IRQn
 
 #define AUDIO_IN_DFSDM_DMA_PERIPH_DATA_SIZE                     DMA_PDATAALIGN_WORD
 #define AUDIO_IN_DFSDM_DMA_MEM_DATA_SIZE                        DMA_MDATAALIGN_WORD
@@ -242,7 +203,7 @@ extern DMA_HandleTypeDef               hdma_dfsdmReg_FLT[];
 #define AUDIO_IN_DFSDM_DMA_1st_CH_IRQHandler                    DMA1_Channel4_IRQHandler
 #define AUDIO_IN_DFSDM_DMA_2nd_CH_IRQHandler                    DMA1_Channel5_IRQHandler
 #define AUDIO_IN_DFSDM_DMA_3rd_CH_IRQHandler                    DMA1_Channel6_IRQHandler
-#define AUDIO_IN_DFSDM_DMA_4th_CH_IRQHandler                    DMA1_Channel7_IRQHandler  
+#define AUDIO_IN_DFSDM_DMA_4th_CH_IRQHandler                    DMA1_Channel7_IRQHandler
 
 /**
  * @}
@@ -250,18 +211,18 @@ extern DMA_HandleTypeDef               hdma_dfsdmReg_FLT[];
 
 /*Number of millisecond of audio at each DMA interrupt*/
 #define N_MS_PER_INTERRUPT               1
- 
-   /** @defgroup X-NUCLEO-CCA02M1_AUDIO_L4_Exported_Functions 
+
+   /** @defgroup MP34DT01_L4_DRIVER_AUDIO_L4_Exported_Functions
   * @{
-  */  
-uint8_t BSP_AUDIO_IN_SetVolume(uint8_t Volume);
-uint8_t BSP_AUDIO_IN_Init(uint32_t AudioFreq, uint32_t BitRes, uint32_t ChnlNbr);
-uint8_t BSP_AUDIO_IN_DeInit(void);
-uint8_t BSP_AUDIO_IN_Record(uint16_t* pbuf, uint32_t size);
-uint8_t BSP_AUDIO_IN_Stop(void);
-uint8_t BSP_AUDIO_IN_Pause(void);
-uint8_t BSP_AUDIO_IN_Resume(void);
-uint8_t BSP_AUDIO_IN_ClockConfig(uint32_t AudioFreq, void *Params);
+  */
+uint8_t MP34DT01_SetVolume(uint8_t Volume);
+uint8_t MP34DT01_Init(uint32_t AudioFreq, uint32_t BitRes, uint32_t ChnlNbr, PinName ckout, PinName datin);
+uint8_t MP34DT01_DeInit(PinName ckout, PinName datin);
+uint8_t MP34DT01_Record(uint16_t* pbuf, uint32_t size);
+uint8_t MP34DT01_Stop(void);
+uint8_t MP34DT01_Pause(void);
+uint8_t MP34DT01_Resume(void);
+uint8_t MP34DT01_ClockConfig(uint32_t AudioFreq, void *Params);
 
 
 
@@ -270,9 +231,9 @@ uint8_t BSP_AUDIO_IN_ClockConfig(uint32_t AudioFreq, void *Params);
 /* This function should be implemented by the user application.
  It is called into this driver when the current buffer is filled to prepare the next
  buffer pointer and its size. */
-void BSP_AUDIO_IN_TransferComplete_CallBack(void);
-void BSP_AUDIO_IN_HalfTransfer_CallBack(void);
-void BSP_AUDIO_IN_Error_Callback(void);
+void MP34DT01_TransferComplete_CallBack(void);
+void MP34DT01_HalfTransfer_CallBack(void);
+void MP34DT01_Error_Callback(void);
 
 /**
  * @}
@@ -294,7 +255,6 @@ void BSP_AUDIO_IN_Error_Callback(void);
 }
 #endif
 
-#endif /* __X_NUCLEO_CCA02M1_AUDIO_L4_H */
+#endif /* __MP34DT01_DRIVER_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
